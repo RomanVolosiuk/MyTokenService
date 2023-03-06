@@ -1,17 +1,12 @@
 package ua.volosiuk.mytokenservice.dto;
 
 import lombok.Getter;
-import ua.volosiuk.mytokenservice.util.HeaderUtils;
+import lombok.Setter;
 
-import java.util.List;
-
+@Setter
 @Getter
 public class CredentialDTO {
-    private final String username;
-    private final String password;
-    public CredentialDTO(String headerContent) {
-    List<String> credentialsList = HeaderUtils.credentialExtraction(headerContent);
-    this.username = credentialsList.get(0);
-    this.password = credentialsList.get(1);
-    }
+    private String username;
+    private String password;
+
 }

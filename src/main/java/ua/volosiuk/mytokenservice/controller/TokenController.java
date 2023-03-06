@@ -13,9 +13,9 @@ public class TokenController {
     @PostMapping("/token")
     public String token(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String headerContent) {
         log.info("controller / token = " + headerContent);
-        Credentials credentialsObj = new Credentials(headerContent);
+        /*Credentials credentialsObj = new Credentials(headerContent);
         log.info(credentialsObj.getUsername());
-        log.info(credentialsObj.getPassword());
+        log.info(credentialsObj.getPassword());*/
         return "temp empty token string";
     }
 }
