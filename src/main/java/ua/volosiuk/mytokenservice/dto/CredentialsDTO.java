@@ -1,12 +1,10 @@
 package ua.volosiuk.mytokenservice.dto;
+import lombok.*;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Setter
-@Getter
-public class CredentialDTO {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class CredentialsDTO {
     private String username;
     private String password;
-
 }

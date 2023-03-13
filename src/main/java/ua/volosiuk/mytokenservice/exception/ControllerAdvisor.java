@@ -13,7 +13,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({MalformedCredentialsException.class})
     public ResponseEntity<ErrorResponse> handleRequiresAuthorisationException(){
-        ErrorResponse er = new ErrorResponse("Some problem with authorization header",
+        ErrorResponse er = new ErrorResponse("Illegal format authorization header",
                 LocalDateTime.now());
 
         return new ResponseEntity<>(er, HttpStatus.BAD_REQUEST);
@@ -21,7 +21,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({RequiresAuthorisationException.class})
     public ResponseEntity<ErrorResponse> handleMalformedCredentialsException(){
-        ErrorResponse er = new ErrorResponse("Some problem with username or password",
+        ErrorResponse er = new ErrorResponse("Illegal format username or password",
                 LocalDateTime.now());
 
         return new ResponseEntity<>(er, HttpStatus.UNAUTHORIZED);
