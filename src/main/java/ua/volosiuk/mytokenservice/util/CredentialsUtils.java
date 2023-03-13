@@ -1,31 +1,29 @@
 package ua.volosiuk.mytokenservice.util;
 
+import ua.volosiuk.mytokenservice.dto.CredentialsDTO;
 import ua.volosiuk.mytokenservice.exception.MalformedCredentialsException;
 import ua.volosiuk.mytokenservice.exception.RequiresAuthorisationException;
-
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
 
-public final class HeaderUtils {
-    private HeaderUtils() {
-    }
+public class CredentialsUtils {
 
-    public static List<String> credentialExtraction(String originalInput) {
-        List<String> listCredentials = new ArrayList<>(2);
+    private CredentialsUtils() {}
 
-        if (originalInput == null || originalInput.isEmpty())
+    public static CredentialsDTO getCredentials(String headerContent) {
+
+        if (headerContent == null || headerContent.isEmpty())
             throw new MalformedCredentialsException();
 
-        String decodedString = getDecodedString(originalInput);
+        String decodedString = getDecodedString(headerContent);
+
         if (decodedString.matches("^.{5,25}:(.{6,25})$")) {
             int colonIndex = decodedString.indexOf(':');
-            listCredentials.add(decodedString.substring(0, colonIndex));
-            listCredentials.add(decodedString.substring(colonIndex + 1));
+           String username = (decodedString.substring(0, colonIndex));
+           String password = (decodedString.substring(colonIndex + 1));
+            return new CredentialsDTO(username, password);
         } else {
             throw new RequiresAuthorisationException();
         }
-        return listCredentials;
     }
     private static String getDecodedString(String originalInput) {
         String cleanUserPass = originalInput.substring(6);
