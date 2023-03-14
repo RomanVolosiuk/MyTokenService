@@ -30,4 +30,5 @@ public class CredentialsUtils {
         byte[] decodedBytes = Base64.getDecoder().decode(cleanUserPass);
         return new String(decodedBytes);
     }
+
 }

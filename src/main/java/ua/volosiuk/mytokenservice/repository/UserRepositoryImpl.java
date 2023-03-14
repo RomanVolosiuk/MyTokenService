@@ -15,4 +15,5 @@ public class UserRepositoryImpl implements UserRepository {
         return Optional.empty();
         //contacts.stream().filter(contact -> id.equals(contact.getId())).findFirst();
     }
+
 }

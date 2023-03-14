@@ -8,4 +8,5 @@ import java.time.LocalDateTime;
 public class ErrorResponse {
     private String errorMessage;
     private LocalDateTime timestamp;
+
 }
