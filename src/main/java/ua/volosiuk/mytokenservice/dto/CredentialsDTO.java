@@ -7,4 +7,5 @@ import lombok.*;
 public class CredentialsDTO {
     private String username;
     private String password;
+
 }
