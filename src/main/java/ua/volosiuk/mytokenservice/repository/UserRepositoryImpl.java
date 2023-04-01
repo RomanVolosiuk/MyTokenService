@@ -23,14 +23,12 @@ public class UserRepositoryImpl implements UserRepository {
                 new User(1L, "ErikClapton", "7c6a180b36896a0a8c02787eeafb0e4c", true, Role.USER),
                 new User(2L, "JimmyHendrix", "6cb75f652a9b52798eb6cf2201057c73", true, Role.ADMIN),
                 new User(3L, "JonLord", "819b0643d6b89dc9b579fdfc9094f28e", true, Role.TEA_POT)
-
         ));
     }
 
     @Override
     public Optional<User> findByUsername(String username) {
         log.info("findByUsername started");
-        return users.stream().filter(user -> username.equals(user.getUsername())).findFirst();
+        return users.stream().filter(user -> user.getUsername().equals(username)).findFirst();
     }
-
 }
