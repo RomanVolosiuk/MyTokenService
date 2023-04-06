@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ua.volosiuk.mytokenservice.dto.CredentialsDTO;
-import ua.volosiuk.mytokenservice.entity.User;
 import ua.volosiuk.mytokenservice.service.TokenService;
 import ua.volosiuk.mytokenservice.util.CredentialsUtils;
 
@@ -24,9 +23,7 @@ public class TokenController {
     public String token(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerContent) {
         CredentialsDTO credentialsDTO = credentialsUtils.getCredentials(headerContent);
 
-        //
-        User getUser = tokenService.loadUserByUsername(credentialsDTO.getUsername());
-        return "temp empty token string";
+        boolean result = tokenService.userVerifier(credentialsDTO);
+        return "temp empty token string " + result;
     }
-
 }
