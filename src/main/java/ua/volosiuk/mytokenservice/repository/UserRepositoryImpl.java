@@ -27,7 +27,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> findByUsername(String username) {
-        log.info("findByUsername started");
+
         return users.stream().filter(user -> user.getUsername().equals(username)).findFirst();
     }
 }
