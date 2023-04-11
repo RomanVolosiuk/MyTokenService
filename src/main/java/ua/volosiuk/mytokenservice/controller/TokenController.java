@@ -1,22 +1,25 @@
 package ua.volosiuk.mytokenservice.controller;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ua.volosiuk.mytokenservice.dto.CredentialsDTO;
+import ua.volosiuk.mytokenservice.service.TokenService;
+import ua.volosiuk.mytokenservice.util.CredentialsUtils;
 
-import static ua.volosiuk.mytokenservice.util.CredentialsUtils.getCredentials;
-
+@Log4j2
 @RestController
-@RequestMapping("/token")
+@RequestMapping("/auth")
+@RequiredArgsConstructor
 public class TokenController {
+    private final TokenService tokenService;
+    private final CredentialsUtils credentialsUtils;
 
     @PostMapping
     public String token(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerContent) {
-        CredentialsDTO test = getCredentials(headerContent);
-        return "temp empty token string";
-    }
+        CredentialsDTO credentialsDTO = credentialsUtils.getCredentials(headerContent);
 
+        return tokenService.isUserValid(credentialsDTO);
+    }
 }

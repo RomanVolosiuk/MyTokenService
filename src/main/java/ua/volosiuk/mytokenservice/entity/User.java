@@ -1,16 +1,16 @@
 package ua.volosiuk.mytokenservice.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 
 @AllArgsConstructor
-@Getter
+@Data
 public class User {
 
     private Long id;
     private String username;
     private  String password;
     private boolean enabled;
-    private  String role;
+    private  Role role;
 
 }
