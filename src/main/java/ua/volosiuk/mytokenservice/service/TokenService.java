@@ -1,24 +1,23 @@
 package ua.volosiuk.mytokenservice.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import ua.volosiuk.mytokenservice.dto.CredentialsDTO;
-import ua.volosiuk.mytokenservice.entity.Role;
 import ua.volosiuk.mytokenservice.entity.User;
 import ua.volosiuk.mytokenservice.exception.UserDisabledException;
 import ua.volosiuk.mytokenservice.exception.UserNotExistException;
 import ua.volosiuk.mytokenservice.exception.WrongPasswordException;
 import ua.volosiuk.mytokenservice.repository.UserRepository;
+import ua.volosiuk.mytokenservice.security.JwtTokenProvider;
 import ua.volosiuk.mytokenservice.util.HashMD5EncoderUtils;
 
 import java.util.Optional;
 
 @Service
-@Log4j2
 @RequiredArgsConstructor
 public class TokenService {
     private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     private User loadUserByUsername(String username) {
         Optional<User> optionalUser = userRepository.findByUsername(username);
@@ -29,25 +28,18 @@ public class TokenService {
     public String isUserValid(CredentialsDTO credentialsDTO) {
         User user = loadUserByUsername(credentialsDTO.getUsername());
 
-        if (!(passwordsValid(credentialsDTO.getPassword(), user.getPassword())))
+        if (!(passwordValid(credentialsDTO.getPassword(), user.getPassword())))
             throw new WrongPasswordException();
 
         if (!(user.isEnabled()))
             throw new UserDisabledException();
 
-        return tokenGenerator(user.getUsername(),user.getRole());
+        return jwtTokenProvider.createToken(user.getUsername(), user.getRole());
     }
 
-    private boolean passwordsValid(String credentialsPassword, String userHashPassword) {
-
+    private boolean passwordValid(String credentialsPassword, String userHashedPassword) {
         final String result = new HashMD5EncoderUtils().stringToHashMD5(credentialsPassword);
 
-        return userHashPassword.equals(result);
+        return userHashedPassword.equals(result);
     }
-
-    private String tokenGenerator(String username, Role role) {
-
-        return "token" + ":" + username + "." + role + "." + System.currentTimeMillis();
-    }
-
 }
