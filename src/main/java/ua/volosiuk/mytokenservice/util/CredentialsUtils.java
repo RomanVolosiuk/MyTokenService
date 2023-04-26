@@ -11,11 +11,10 @@ import java.util.Base64;
 public class CredentialsUtils {
 
     public CredentialsDTO getCredentials(String headerContent) {
-
         if (headerContent == null || headerContent.isEmpty())
             throw new MalformedCredentialsException();
 
-        String decodedString = getDecodedString(headerContent);
+        String decodedString = getDecodedBase64String(headerContent);
 
         if (decodedString.matches("^.{5,25}:(.{6,25})$")) {
             int colonIndex = decodedString.indexOf(':');
@@ -27,10 +26,9 @@ public class CredentialsUtils {
         }
     }
 
-    private String getDecodedString(String originalInput) {
+    private String getDecodedBase64String(String originalInput) {
         String cleanUserPass = originalInput.substring(6);
         byte[] decodedBytes = Base64.getDecoder().decode(cleanUserPass);
         return new String(decodedBytes);
     }
-
 }
