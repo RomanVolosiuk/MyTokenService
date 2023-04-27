@@ -26,7 +26,7 @@ public class TokenService {
     public User getUserObject(CredentialsDTO credentialsDTO) {
         User user = loadUserByUsername(credentialsDTO.getUsername());
 
-        if (!(passwordValid(credentialsDTO.getPassword(), user.getPassword())))
+        if (!(isPasswordValid(credentialsDTO.getPassword(), user.getPassword())))
             throw new WrongPasswordException();
 
         if (!(user.isEnabled()))
@@ -35,7 +35,7 @@ public class TokenService {
         return user;
     }
 
-    private boolean passwordValid(String credentialsPassword, String userHashedPassword) {
+    private boolean isPasswordValid(String credentialsPassword, String userHashedPassword) {
         final String result = new HashMD5EncoderUtils().stringToHashMD5(credentialsPassword);
 
         return userHashedPassword.equals(result);
