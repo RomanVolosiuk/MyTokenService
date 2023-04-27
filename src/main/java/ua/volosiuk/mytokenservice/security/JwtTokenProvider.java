@@ -37,11 +37,13 @@ public class JwtTokenProvider {
                 + "."
                 + getBase64UrlString(formatToString(claims));
 
-        return getBase64UrlString(formatToString(header))
+        return "{\"token\":\""
+                + getBase64UrlString(formatToString(header))
                 + "."
                 + getBase64UrlString(formatToString(claims))
                 + "."
                 + sign(headerAndPayload)
+                + "\"}"
                 ;
     }
 
