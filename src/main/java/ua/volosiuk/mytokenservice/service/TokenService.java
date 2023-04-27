@@ -14,6 +14,8 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+// please create UserService and move user related stuff there
+// this service should be called from controller and use token provider
 public class TokenService {
     private final UserRepository userRepository;
 

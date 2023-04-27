@@ -20,6 +20,7 @@ private final MessageDigest messageDigest;
     }
 
     public String stringToHashMD5(String credentialsPassword) {
+        // credentialsPassword not the best name. "input" is better
         messageDigest.reset();
         messageDigest.update(credentialsPassword.getBytes(StandardCharsets.UTF_8));
         final byte[] resultByte = messageDigest.digest();

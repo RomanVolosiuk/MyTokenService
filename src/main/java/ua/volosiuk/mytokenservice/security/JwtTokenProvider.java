@@ -24,11 +24,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Component
 public class JwtTokenProvider {
+    // must be private
     @Value("${jwt.token.secretKey}")
     String secretKey;
     private final TokenService tokenService;
     private static final String SHA256 = "HmacSHA256";
 
+    // method should return token, not json with token. json should be created in token service
     public String createToken(CredentialsDTO credentialsDTO) {
         User user = tokenService.getUserObject(credentialsDTO);
 
@@ -54,6 +56,7 @@ public class JwtTokenProvider {
                 ;
     }
 
+    // use any of mappers to create json
     private String formatToString(Map<String, String> map) {
         String result = map.entrySet().stream()
                 .map(e -> "\"" + e.getKey() + "\"" + ":" + "\"" + e.getValue() + "\"")

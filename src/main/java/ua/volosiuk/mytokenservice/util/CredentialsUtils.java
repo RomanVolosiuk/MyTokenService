@@ -9,6 +9,7 @@ import java.util.Base64;
 
 @Component
 public class CredentialsUtils {
+    // please investigate more ways to extract credentials
 
     public CredentialsDTO getCredentials(String headerContent) {
         if (headerContent == null || headerContent.isEmpty())
@@ -22,6 +23,7 @@ public class CredentialsUtils {
             String password = (decodedString.substring(colonIndex + 1));
             return new CredentialsDTO(username, password);
         } else {
+            // this logic does not fit here. return either credentials either null and check it elsewhere
             throw new RequiresAuthorisationException();
         }
     }

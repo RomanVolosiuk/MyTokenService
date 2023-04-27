@@ -19,6 +19,7 @@ public class TokenController {
 
     @PostMapping
     public String token(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerContent) {
+        // move below line to the service
         CredentialsDTO credentialsDTO = credentialsUtils.getCredentials(headerContent);
 
         return jwtTokenProvider.createToken(credentialsDTO);
