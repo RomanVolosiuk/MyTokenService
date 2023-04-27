@@ -1,6 +1,7 @@
 package ua.volosiuk.mytokenservice.exception;
 
-import lombok.NoArgsConstructor;
-
-@NoArgsConstructor
-public class BadSha256HMACException extends RuntimeException {}
+public class BadSha256HMACException extends RuntimeException {
+    public BadSha256HMACException(String message) {
+        super(message);
+    }
+}

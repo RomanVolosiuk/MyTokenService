@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenProvider {
     @Value("${jwt.token.secretKey}")
-    String secretKey;
+    private String secretKey;
     private final TokenService tokenService;
     private static final String SHA256 = "HmacSHA256";
 
@@ -75,7 +75,8 @@ public class JwtTokenProvider {
 
             return Base64.encodeBase64URLSafeString(sha256HMAC.doFinal(data.getBytes(StandardCharsets.UTF_8)));
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-            throw new BadSha256HMACException();
+            log.error("Bad Sha256HMAC algorithm in JwtTokenProvider.class");
+            throw new BadSha256HMACException("Bad Sha256HMAC algorithm in JwtTokenProvider.class");
         }
     }
 }
