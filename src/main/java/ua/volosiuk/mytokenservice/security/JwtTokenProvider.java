@@ -1,9 +1,10 @@
 package ua.volosiuk.mytokenservice.security;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import ua.volosiuk.mytokenservice.entity.Role;
+import ua.volosiuk.mytokenservice.dto.CredentialsDTO;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -11,27 +12,33 @@ import java.nio.charset.StandardCharsets;
 import java.security.*;
 
 import org.apache.commons.codec.binary.Base64;
+import ua.volosiuk.mytokenservice.entity.User;
 import ua.volosiuk.mytokenservice.exception.BadSha256HMACException;
+import ua.volosiuk.mytokenservice.service.TokenService;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Log4j2
+@RequiredArgsConstructor
 @Component
 public class JwtTokenProvider {
     @Value("${jwt.token.secretKey}")
     String secretKey;
+    private final TokenService tokenService;
     private static final String SHA256 = "HmacSHA256";
 
-    public String createToken(String username, Role role){
+    public String createToken(CredentialsDTO credentialsDTO) {
+        User user = tokenService.getUserObject(credentialsDTO);
+
         Map<String, String> header = new LinkedHashMap<>();
         header.put("alg", "HS256");
         header.put("typ", "JWT");
 
         Map<String, String> claims = new LinkedHashMap<>();
-        claims.put("name", username);
-        claims.put("roles", role.toString());
+        claims.put("name", user.getUsername());
+        claims.put("roles", String.valueOf(user.getRole()));
 
         String headerAndPayload = getBase64UrlString(formatToString(header))
                 + "."
