@@ -55,8 +55,8 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
         return mainTemplateHandleException(ex, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(BadSha256HMACException.class)
-    public ResponseEntity<ErrorResponse> handleBadSha256HMACException(BadSha256HMACException ex) {
+    @ExceptionHandler(BadSha256HmacOrKeyException.class)
+    public ResponseEntity<ErrorResponse> handleBadSha256HMACException(BadSha256HmacOrKeyException ex) {
 
         return mainTemplateHandleException(ex, HttpStatus.INTERNAL_SERVER_ERROR);
     }
