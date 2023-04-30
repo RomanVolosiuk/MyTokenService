@@ -34,7 +34,7 @@ public class JwtTokenProvider {
             this.sha256HMAC.init(secret);
         } catch (NoSuchAlgorithmException | InvalidKeyException ex) {
             log.error("Invalid Sha256HMAC algorithm or key in JwtTokenProvider.class");
-            throw new BadSha256HmacOrKeyException("Invalid Sha256HMAC algorithm or key in JwtTokenProvider.class");
+            throw new BadSha256HmacOrKeyException("Invalid Sha256HMAC algorithm or key");
         }
     }
 
