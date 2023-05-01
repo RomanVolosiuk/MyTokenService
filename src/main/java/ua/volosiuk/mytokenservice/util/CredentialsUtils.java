@@ -1,5 +1,6 @@
 package ua.volosiuk.mytokenservice.util;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import ua.volosiuk.mytokenservice.dto.CredentialsDTO;
 import ua.volosiuk.mytokenservice.exception.MalformedCredentialsException;
@@ -7,13 +8,15 @@ import ua.volosiuk.mytokenservice.exception.RequiresAuthorisationException;
 
 import java.util.Base64;
 
+@Log4j2
 @Component
 public class CredentialsUtils {
 
     public CredentialsDTO getCredentials(String headerContent) {
-        if (headerContent == null || headerContent.isEmpty())
-            throw new MalformedCredentialsException();
-
+        if (headerContent == null || headerContent.isEmpty()) {
+            log.warn("Illegal format authorization header");
+            throw new MalformedCredentialsException("Illegal format authorization header");
+        }
         String decodedString = getDecodedBase64String(headerContent);
 
         if (decodedString.matches("^.{5,25}:(.{6,25})$")) {
@@ -22,7 +25,8 @@ public class CredentialsUtils {
             String password = (decodedString.substring(colonIndex + 1));
             return new CredentialsDTO(username, password);
         } else {
-            throw new RequiresAuthorisationException();
+            log.warn("Illegal format username or password");
+            throw new RequiresAuthorisationException("Illegal format username or password");
         }
     }
 

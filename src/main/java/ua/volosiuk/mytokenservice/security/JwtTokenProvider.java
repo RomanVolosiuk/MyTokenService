@@ -1,7 +1,7 @@
 package ua.volosiuk.mytokenservice.security;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ua.volosiuk.mytokenservice.dto.CredentialsDTO;
@@ -13,53 +13,52 @@ import java.security.*;
 
 import org.apache.commons.codec.binary.Base64;
 import ua.volosiuk.mytokenservice.entity.User;
-import ua.volosiuk.mytokenservice.exception.BadSha256HMACException;
+import ua.volosiuk.mytokenservice.exception.BadSha256HmacOrKeyException;
 import ua.volosiuk.mytokenservice.service.TokenService;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Log4j2
-@RequiredArgsConstructor
 @Component
 public class JwtTokenProvider {
-    @Value("${jwt.token.secretKey}")
-    String secretKey;
     private final TokenService tokenService;
     private static final String SHA256 = "HmacSHA256";
+    private final Mac sha256HMAC;
+
+    public JwtTokenProvider(TokenService tokenService, @Value("${jwt.token.secretKey}") String secretKey) {
+        this.tokenService = tokenService;
+        try {
+            SecretKeySpec secret = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), SHA256);
+            this.sha256HMAC = Mac.getInstance(SHA256);
+            this.sha256HMAC.init(secret);
+        } catch (NoSuchAlgorithmException | InvalidKeyException ex) {
+            log.error("Invalid Sha256HMAC algorithm or key in JwtTokenProvider.class");
+            throw new BadSha256HmacOrKeyException("Invalid Sha256HMAC algorithm or key");
+        }
+    }
 
     public String createToken(CredentialsDTO credentialsDTO) {
         User user = tokenService.getUserObject(credentialsDTO);
 
-        Map<String, String> header = new LinkedHashMap<>();
-        header.put("alg", "HS256");
-        header.put("typ", "JWT");
+        Map<String, String> headerMap = new LinkedHashMap<>();
+        headerMap.put("alg", "HS256");
+        headerMap.put("typ", "JWT");
+        JSONObject header = new JSONObject(headerMap);
 
-        Map<String, String> claims = new LinkedHashMap<>();
-        claims.put("name", user.getUsername());
-        claims.put("roles", String.valueOf(user.getRole()));
+        Map<String, String> claimsMap = new LinkedHashMap<>();
+        claimsMap.put("name", user.getUsername());
+        claimsMap.put("roles", String.valueOf(user.getRole()));
+        JSONObject claims = new JSONObject(claimsMap);
 
-        String headerAndPayload = getBase64UrlString(formatToString(header))
+        String headerAndPayload = getBase64UrlString(header.toString())
                 + "."
-                + getBase64UrlString(formatToString(claims));
+                + getBase64UrlString(claims.toString());
 
-        return "{\"token\":\""
-                + getBase64UrlString(formatToString(header))
-                + "."
-                + getBase64UrlString(formatToString(claims))
-                + "."
-                + sign(headerAndPayload)
-                + "\"}"
-                ;
-    }
+        JSONObject token = new JSONObject();
+        token.put("token", headerAndPayload + "." + sign(headerAndPayload));
 
-    private String formatToString(Map<String, String> map) {
-        String result = map.entrySet().stream()
-                .map(e -> "\"" + e.getKey() + "\"" + ":" + "\"" + e.getValue() + "\"")
-                .collect(Collectors.joining(","));
-
-        return "{" + result + "}";
+        return token.toString();
     }
 
     private String getBase64UrlString(String originalString) {
@@ -68,14 +67,7 @@ public class JwtTokenProvider {
     }
 
     private String sign(String data) {
-        try {
-            final Mac sha256HMAC = Mac.getInstance(SHA256);
-            final SecretKeySpec secret = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), SHA256);
-            sha256HMAC.init(secret);
 
-            return Base64.encodeBase64URLSafeString(sha256HMAC.doFinal(data.getBytes(StandardCharsets.UTF_8)));
-        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-            throw new BadSha256HMACException();
-        }
+        return Base64.encodeBase64URLSafeString(sha256HMAC.doFinal(data.getBytes(StandardCharsets.UTF_8)));
     }
 }

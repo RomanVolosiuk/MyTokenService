@@ -1,52 +1,63 @@
 package ua.volosiuk.mytokenservice.exception;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
 import java.time.LocalDateTime;
 
+@Log4j2
 @ControllerAdvice
 public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler({MalformedCredentialsException.class})
-    public ResponseEntity<ErrorResponse> handleRequiresAuthorisationException() {
-        ErrorResponse er = new ErrorResponse("Illegal format authorization header",
-                LocalDateTime.now());
+    private ResponseEntity<ErrorResponse> mainTemplateHandleException(Throwable ex, HttpStatus status) {
+       ErrorResponse er = new ErrorResponse(ex.getMessage(), LocalDateTime.now());
 
-        return new ResponseEntity<>(er, HttpStatus.BAD_REQUEST);
+       return new ResponseEntity<>(er, status);
     }
 
-    @ExceptionHandler({RequiresAuthorisationException.class})
-    public ResponseEntity<ErrorResponse> handleMalformedCredentialsException() {
-        ErrorResponse er = new ErrorResponse("Illegal format username or password",
-                LocalDateTime.now());
+    @ExceptionHandler(MalformedCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleRequiresAuthorisationException(MalformedCredentialsException ex) {
 
-        return new ResponseEntity<>(er, HttpStatus.UNAUTHORIZED);
+        return mainTemplateHandleException(ex, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({UserNotExistException.class})
-    public ResponseEntity<ErrorResponse> handleUserNotExistException() {
-        ErrorResponse er = new ErrorResponse("User not exist",
-                LocalDateTime.now());
+    @ExceptionHandler(RequiresAuthorisationException.class)
+    public ResponseEntity<ErrorResponse> handleMalformedCredentialsException(RequiresAuthorisationException ex) {
 
-        return new ResponseEntity<>(er, HttpStatus.UNAUTHORIZED);
+        return mainTemplateHandleException(ex, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler({WrongPasswordException.class})
-    public ResponseEntity<ErrorResponse> handleWrongPasswordException() {
-        ErrorResponse er = new ErrorResponse("Wrong password",
-                LocalDateTime.now());
+    @ExceptionHandler(UserNotExistException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotExistException(UserNotExistException ex) {
 
-        return new ResponseEntity<>(er, HttpStatus.UNAUTHORIZED);
+        return mainTemplateHandleException(ex, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler({UserDisabledException.class})
-    public ResponseEntity<ErrorResponse> handleUserDisabledException() {
-        ErrorResponse er = new ErrorResponse("User disabled",
-                LocalDateTime.now());
+    @ExceptionHandler(WrongPasswordException.class)
+    public ResponseEntity<ErrorResponse> handleWrongPasswordException(WrongPasswordException ex) {
 
-        return new ResponseEntity<>(er, HttpStatus.UNAUTHORIZED);
+        return mainTemplateHandleException(ex, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(UserDisabledException.class)
+    public ResponseEntity<ErrorResponse> handleUserDisabledException(UserDisabledException ex) {
+
+        return mainTemplateHandleException(ex, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(BadMD5AlgorithmException.class)
+    public ResponseEntity<ErrorResponse> handleBadMD5AlgorithmException(BadMD5AlgorithmException ex) {
+
+        return mainTemplateHandleException(ex, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(BadSha256HmacOrKeyException.class)
+    public ResponseEntity<ErrorResponse> handleBadSha256HMACException(BadSha256HmacOrKeyException ex) {
+
+        return mainTemplateHandleException(ex, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
