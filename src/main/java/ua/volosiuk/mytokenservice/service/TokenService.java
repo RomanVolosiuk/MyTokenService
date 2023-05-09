@@ -1,6 +1,6 @@
 package ua.volosiuk.mytokenservice.service;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import ua.volosiuk.mytokenservice.dto.CredentialsDTO;
@@ -8,6 +8,7 @@ import ua.volosiuk.mytokenservice.entity.User;
 import ua.volosiuk.mytokenservice.exception.UserDisabledException;
 import ua.volosiuk.mytokenservice.exception.UserNotExistException;
 import ua.volosiuk.mytokenservice.exception.WrongPasswordException;
+import ua.volosiuk.mytokenservice.repository.DatabaseService;
 import ua.volosiuk.mytokenservice.repository.UserRepository;
 import ua.volosiuk.mytokenservice.util.HashMD5EncoderUtils;
 
@@ -15,12 +16,14 @@ import java.util.Optional;
 
 @Log4j2
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class TokenService {
-    private final UserRepository userRepository;
+
+    //private final UserRepository userRepository;
+    private final DatabaseService databaseService;
 
     private User loadUserByUsername(String username) {
-        Optional<User> optionalUser = userRepository.findByUsername(username);
+        Optional<User> optionalUser = databaseService.getUserByUsername(username);
 
         return optionalUser.orElseThrow(() -> {
             log.warn("User with username {} does not exist", username);
