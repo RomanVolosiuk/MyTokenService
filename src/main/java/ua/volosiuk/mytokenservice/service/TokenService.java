@@ -9,7 +9,6 @@ import ua.volosiuk.mytokenservice.exception.UserDisabledException;
 import ua.volosiuk.mytokenservice.exception.UserNotExistException;
 import ua.volosiuk.mytokenservice.exception.WrongPasswordException;
 import ua.volosiuk.mytokenservice.repository.DatabaseService;
-import ua.volosiuk.mytokenservice.repository.UserRepository;
 import ua.volosiuk.mytokenservice.util.HashMD5EncoderUtils;
 
 import java.util.Optional;
@@ -19,7 +18,6 @@ import java.util.Optional;
 @AllArgsConstructor
 public class TokenService {
 
-    //private final UserRepository userRepository;
     private final DatabaseService databaseService;
 
     private User loadUserByUsername(String username) {
@@ -27,6 +25,7 @@ public class TokenService {
 
         return optionalUser.orElseThrow(() -> {
             log.warn("User with username {} does not exist", username);
+
             return new UserNotExistException("User does not exist");
         });
     }
@@ -38,7 +37,6 @@ public class TokenService {
             log.warn("Wrong password for username {}", user.getUsername());
             throw new WrongPasswordException("Wrong password");
         }
-
         if (!(user.isEnabled())) {
             log.warn("User {} is disabled", user.getUsername());
             throw new UserDisabledException("User is disabled");

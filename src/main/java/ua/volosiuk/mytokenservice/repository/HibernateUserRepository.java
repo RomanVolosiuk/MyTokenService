@@ -1,8 +1,6 @@
 package ua.volosiuk.mytokenservice.repository;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -14,10 +12,8 @@ import ua.volosiuk.mytokenservice.entity.User;
 import java.util.Optional;
 
 @Log4j2
-@AllArgsConstructor
-@Getter
-@Setter
 @Repository
+@RequiredArgsConstructor
 public class HibernateUserRepository implements UserRepository {
 
     private final SessionFactory sessionFactory;
@@ -32,6 +28,5 @@ public class HibernateUserRepository implements UserRepository {
         User user = query.uniqueResult();
 
         return Optional.ofNullable(user);
-
     }
 }
