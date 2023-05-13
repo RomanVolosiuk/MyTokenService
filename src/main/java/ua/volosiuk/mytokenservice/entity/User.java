@@ -1,16 +1,34 @@
 package ua.volosiuk.mytokenservice.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
+
+
+@Entity
+@Table(name = "user_db")
+@Getter
 @AllArgsConstructor
-@Data
-public class User {
+@NoArgsConstructor
 
+public class User {
+    @Id
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "username")
     private String username;
-    private  String password;
+
+    @Column(name = "password")
+    private String password;
+
+    @Column(name = "enabled")
     private boolean enabled;
-    private  Role role;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private Role role;
 
 }
