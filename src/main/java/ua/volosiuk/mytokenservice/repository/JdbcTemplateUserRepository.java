@@ -2,17 +2,20 @@ package ua.volosiuk.mytokenservice.repository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import ua.volosiuk.mytokenservice.entity.Role;
 import ua.volosiuk.mytokenservice.entity.User;
 
 import java.util.Optional;
 
 @Log4j2
+@Component
+@Qualifier("jdbcTemplateUserRepository")
 @RequiredArgsConstructor
-@Repository
 public class JdbcTemplateUserRepository implements UserRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
