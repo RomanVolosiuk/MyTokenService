@@ -5,7 +5,6 @@ import lombok.extern.log4j.Log4j2;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ua.volosiuk.mytokenservice.entity.User;
@@ -13,12 +12,17 @@ import ua.volosiuk.mytokenservice.entity.User;
 import java.util.Optional;
 
 @Log4j2
-@Component
-@Qualifier("hibernateUserRepository")
+@Component("hibernateUserRepository")
 @RequiredArgsConstructor
 public class HibernateUserRepository implements UserRepository {
 
+    private static final String REPOSITORY_TYPE = "HibernateUserRepository";
     private final SessionFactory sessionFactory;
+
+    @Override
+    public String getRepositoryIdentifier() {
+        return REPOSITORY_TYPE;
+    }
 
     @Override
     @Transactional(readOnly = true)

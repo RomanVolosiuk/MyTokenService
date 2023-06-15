@@ -2,7 +2,6 @@ package ua.volosiuk.mytokenservice.repository;
 
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ua.volosiuk.mytokenservice.entity.Role;
 import ua.volosiuk.mytokenservice.entity.User;
@@ -12,13 +11,18 @@ import java.sql.*;
 import java.util.Optional;
 
 @Log4j2
-@Component
-@Qualifier("jdbcUserRepository")
+@Component("jdbcUserRepository")
+@Getter
 @RequiredArgsConstructor
 public class JdbcUserRepository implements UserRepository {
 
+    private static final String REPOSITORY_TYPE = "JdbcUserRepository";
     private final DataSource dataSource;
 
+    @Override
+    public String getRepositoryIdentifier() {
+        return REPOSITORY_TYPE;
+    }
 
     @Override
     public Optional<User> findByUsername(String username) {

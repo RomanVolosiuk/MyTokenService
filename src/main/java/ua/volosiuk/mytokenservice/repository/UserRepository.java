@@ -6,6 +6,7 @@ import java.util.Optional;
 
 public interface UserRepository {
 
+    String getRepositoryIdentifier();
     Optional<User> findByUsername(String username);
 
 }

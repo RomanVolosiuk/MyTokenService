@@ -1,45 +1,35 @@
 package ua.volosiuk.mytokenservice.repository;
 
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Log4j2
 @Component
 public class UserRepositoryFactory {
 
-    private final UserRepository jdbcUserRepository;
-    private final UserRepository jdbcTemplateUserRepository;
-    private final UserRepository hibernateUserRepository;
+    private final Map<String, UserRepository> userRepositoryMap;
+    private static final String DEFAULT_USER_REPOSITORY_NAME = "JdbcUserRepository";
 
-    public UserRepositoryFactory(@Qualifier("jdbcUserRepository") UserRepository jdbcUserRepository,
-                                 @Qualifier("jdbcTemplateUserRepository") UserRepository jdbcTemplateUserRepository,
-                                 @Qualifier("hibernateUserRepository") UserRepository hibernateUserRepository) {
-        this.jdbcUserRepository = jdbcUserRepository;
-        this.jdbcTemplateUserRepository = jdbcTemplateUserRepository;
-        this.hibernateUserRepository = hibernateUserRepository;
+    @Autowired
+    public UserRepositoryFactory(List<UserRepository> userRepositoryList) {
+        this.userRepositoryMap = new HashMap<>();
+        for (UserRepository userRepository : userRepositoryList) {
+            this.userRepositoryMap.put(userRepository.getRepositoryIdentifier(), userRepository);
+        }
     }
 
     public UserRepository getUserRepository(String connectionType) {
+        if (userRepositoryMap.get(connectionType) == null) {
+            log.warn("JdbcTemplate selected by default. Invalid repository type: " + connectionType);
 
-        switch (connectionType) {
-            case "jdbc":
-                log.info("!!! Jdbc type connection");
-
-                return jdbcUserRepository;
-            case "jdbcTemplate":
-                log.info("!!! JdbcTemplate type connection");
-
-                return jdbcTemplateUserRepository;
-            case "hibernate":
-                log.info("!!! Hibernate type connection");
-
-                return hibernateUserRepository;
-
-            default:
-                log.warn("JdbcTemplate selected by default. Invalid repository type: " + connectionType);
-
-                return jdbcUserRepository;
+            return userRepositoryMap.get(DEFAULT_USER_REPOSITORY_NAME);
         }
+        return userRepositoryMap.get(connectionType);
     }
 }
+
