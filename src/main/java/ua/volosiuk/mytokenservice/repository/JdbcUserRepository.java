@@ -2,32 +2,31 @@ package ua.volosiuk.mytokenservice.repository;
 
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import ua.volosiuk.mytokenservice.entity.Role;
 import ua.volosiuk.mytokenservice.entity.User;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.Optional;
 
 @Log4j2
-@Repository
+@Component
 @RequiredArgsConstructor
 public class JdbcUserRepository implements UserRepository {
 
-    private String url;
-    private String username;
-    private String password;
+    private static final String REPOSITORY_TYPE = "JdbcUserRepository";
+    private final DataSource dataSource;
 
-    public JdbcUserRepository(String url, String username, String password) {
-        this.url = url;
-        this.username = username;
-        this.password = password;
+    @Override
+    public String getRepositoryIdentifier() {
+        return REPOSITORY_TYPE;
     }
 
     @Override
     public Optional<User> findByUsername(String username) {
         log.info("+++ Jdbc method starts");
-        try (Connection connection = DriverManager.getConnection(this.url, this.username, this.password);
+        try (Connection connection = dataSource.getConnection();
 
              PreparedStatement statement = connection.prepareStatement(
                      "SELECT * FROM user_db WHERE username = ? LIMIT 1")) {
