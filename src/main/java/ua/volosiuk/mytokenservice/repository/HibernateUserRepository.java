@@ -12,7 +12,7 @@ import ua.volosiuk.mytokenservice.entity.User;
 import java.util.Optional;
 
 @Log4j2
-@Component("hibernateUserRepository")
+@Component
 @RequiredArgsConstructor
 public class HibernateUserRepository implements UserRepository {
 

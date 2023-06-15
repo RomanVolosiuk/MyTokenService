@@ -1,6 +1,5 @@
 package ua.volosiuk.mytokenservice.repository;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -12,8 +11,7 @@ import ua.volosiuk.mytokenservice.entity.User;
 import java.util.Optional;
 
 @Log4j2
-@Component("jdbcTemplateUserRepository")
-@Getter
+@Component
 @RequiredArgsConstructor
 public class JdbcTemplateUserRepository implements UserRepository {
 

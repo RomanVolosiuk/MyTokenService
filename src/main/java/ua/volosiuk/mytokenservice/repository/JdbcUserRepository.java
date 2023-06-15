@@ -11,8 +11,7 @@ import java.sql.*;
 import java.util.Optional;
 
 @Log4j2
-@Component("jdbcUserRepository")
-@Getter
+@Component
 @RequiredArgsConstructor
 public class JdbcUserRepository implements UserRepository {
 
